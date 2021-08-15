@@ -7,42 +7,26 @@ public class MoveRecorder : MonoBehaviour
     public int levelLengthInFrames;
     
     private Vector3 initialPos;
-    private List<Vector3> recording = new List<Vector3>();
+    private Vector3[] recording;
     private bool isRecording = false;
     private bool playback = false;
     private Transform objectToRecord;
     private int playbackFrameIndex = 0;
-    
-    public delegate void LevelTimeUpCallback();
-    public LevelTimeUpCallback callback;
-    
+
     public void SetLevelLenght(int levelLengthInSeconds)
     {
         levelLengthInFrames = levelLengthInSeconds * 50;
+        recording = new Vector3[levelLengthInFrames];
     }
 
-    void FixedUpdate()
+    public void PlaybackFrame(int frame)
     {
-        if (isRecording && recording.Count <= levelLengthInFrames)
-        {
-            recording.Add(objectToRecord.position);
-        }
-        else if (isRecording && recording.Count > levelLengthInFrames)
-        {
-            isRecording = false;
-            callback();
-        }
+        objectToRecord.transform.position = recording[frame];
+    }
 
-        if (playback && recording.Count > 0)
-        {
-            objectToRecord.transform.position = recording[playbackFrameIndex];
-            playbackFrameIndex++;
-            
-            if (playbackFrameIndex == recording.Count)
-            {
-                playbackFrameIndex = 0;
-            }
-        }
+    public void RecordFrame(int frame)
+    {
+        recording[frame] = objectToRecord.position;
     }
 
     public void ResetRecording()
@@ -50,7 +34,7 @@ public class MoveRecorder : MonoBehaviour
         playbackFrameIndex = 0;
         isRecording = false;
         playback = false;
-        recording = new List<Vector3>();
+        recording = new Vector3[levelLengthInFrames];
         objectToRecord.transform.position = initialPos;
     }
 
@@ -59,9 +43,8 @@ public class MoveRecorder : MonoBehaviour
         isRecording = false;
     }
 
-    public void StartRecording(Transform objectToRecord, LevelTimeUpCallback callback)
+    public void StartRecording(Transform objectToRecord)
     {
-        this.callback = callback;
         this.objectToRecord = objectToRecord;
         initialPos = objectToRecord.position;
         ResetRecording();
