@@ -69,6 +69,14 @@ public class StateMachine : MonoBehaviour
         this.state = state;
         state.Enter();
     }
+    
+    public void RestartAllPlaybacks()
+    {
+        for (int i = 0; i < currentPlayer; i++)
+        {
+            levelInfo.moveRecorders[i].ResetPlayback();
+        }
+    }
 
     #region States
 
@@ -159,6 +167,8 @@ public class StateMachine : MonoBehaviour
             controller.playerIsActive = true;
             moveRecorder = stateMachine.levelInfo.moveRecorders[stateMachine.currentPlayer];
             moveRecorder.StartRecording(controller.transform, () => {GoToNextState();});
+
+            stateMachine.RestartAllPlaybacks();
         }
 
         public override void Update()
@@ -251,6 +261,22 @@ public class StateMachine : MonoBehaviour
         public End(StateMachine stateMachine) : base(stateMachine)
         {
             Debug.Log("End");
+        }
+
+        public override void Update()
+        {
+            // Backward
+            if (Input.GetKeyDown(KeyCode.Backspace))
+            {
+                GoToPreviousState();
+            }
+        }
+        
+        public override void GoToPreviousState()
+        {
+            stateMachine.currentPlayer--;
+            stateMachine.SetState(new Ready(stateMachine));
+            stateMachine.levelInfo.moveRecorders[stateMachine.currentPlayer].ResetRecording();
         }
     }
 
