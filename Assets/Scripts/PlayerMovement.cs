@@ -7,20 +7,24 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public CharacterController2D controller;
+    private bool activeController = false;
 
     public float runSpeed = 40f;
     
     private float horizontalMove = 0f;
     private bool jump = false;
 
+    /*
     private Animator animator;
     private bool hasAnimator = false;
+    */
 
     private MoveRecorder moveRecorder;
 
     // Start is called before the first frame update
     void Start()
     {
+        /*
         animator = GetComponent<Animator>();
         {
             if (animator != null)
@@ -28,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
                 hasAnimator = true;
             }
         }
+        */
 
         /*
         moveRecorder = GetComponent<MoveRecorder>();
@@ -38,26 +43,33 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (activeController == false)
+        {
+            return;
+        }
+        
         horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
 
+        /*
         if (hasAnimator)
         {
             animator.SetFloat("Speed", Math.Abs(horizontalMove));    
         }
+        */
 
         if (Input.GetButtonDown("Jump"))
         {
             jump = true;
         }
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            moveRecorder.Playback();
-        }
     }
 
     private void FixedUpdate()
     {
+        if (activeController == false)
+        {
+            return;
+        }
+
         controller.Move(horizontalMove * Time.fixedDeltaTime, false, jump);
         jump = false;
     }
@@ -74,16 +86,4 @@ public class PlayerMovement : MonoBehaviour
         controller.playerIsActive = true;
     }
     */
-
-    public void ChangeController(CharacterController2D controller)
-    {
-        controller.playerIsActive = false;
-        moveRecorder.Playback();
-        
-        this.controller = controller;
-        
-        controller.playerIsActive = true;
-        moveRecorder = GetComponent<MoveRecorder>();
-        moveRecorder.StartRecording(this.transform);
-    }
 }

@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class Timebar : MonoBehaviour
 {
+    private PlayerMovement playerMovement;
+    
     public int currentActivePlayer = 0;
     public GameObject[] players;
     private Vector3[] startingPositions;
@@ -25,25 +27,31 @@ public class Timebar : MonoBehaviour
         {
             startingPositions[i] = players[i].transform.position;
         }
+
+        playerMovement = GetComponent<PlayerMovement>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        // Forward
         if (Input.GetKeyDown(KeyCode.Return))
         {
+            // from grey to white
             if (currentActivePlayer == players.Length + 1)
             {
                 while (currentActivePlayer > 0)
                 {
-                    ChangePlayer(-1);    
+                    ChangePlayer(-1);
                 }
             }
-
-            ChangePlayer(+1);
-            
+            else
+            {
+                ChangePlayer(+1);    
+            }
         }
 
+        // Backward
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
             if (currentActivePlayer != 0)
@@ -52,6 +60,7 @@ public class Timebar : MonoBehaviour
             }
         }
 
+        // Move UI Indicator
         if (currentActivePlayer != 0 && currentActivePlayer != players.Length + 1)
         {
             if (timer <= maxTime)
@@ -66,7 +75,6 @@ public class Timebar : MonoBehaviour
         }
     }
 
-
     private void MoveIndicator(float seconds)
     {
         indicator.transform.localPosition = new Vector3((-6 + ((seconds/maxTime) * 12)), -0.011f, 0);
@@ -74,17 +82,17 @@ public class Timebar : MonoBehaviour
 
     private void ChangePlayer(int change)
     {
-        //Deactivate
-        for (int i = 0; i < currentActivePlayer + 1; i++)
-        {
-            EnablePlayer(i, false);    
-        }
-        
+        ResetPos(currentActivePlayer);
         // Increment / Decrement
         currentActivePlayer = (currentActivePlayer + change);
         // Activate
-        EnablePlayer(currentActivePlayer, true);
+        if (change == -1)
+        {
+            ResetPos(currentActivePlayer);
+        }
         
+        
+        // UI stuff
         if (currentActivePlayer == players.Length + 1)
         {
             timebar_background.color = colors[colors.Length-1];
@@ -93,27 +101,24 @@ public class Timebar : MonoBehaviour
         {
             timebar_background.color = colors[currentActivePlayer];    
         }
-
         timer = 0.0f;
-        
         if (currentActivePlayer == 0 || currentActivePlayer == players.Length + 1)
         {
             MoveIndicator(timer);
         }
     }
 
-    private void EnablePlayer(int playerNumber, bool enabled)
+    private void ResetPos(int playerNumber)
     {
-        
         if (playerNumber == 0 || playerNumber > players.Length)
         {
-            // Not a player index
             return;
         }
         else
         {
+            // Reset pos and forces
+            players[playerNumber - 1].GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
             players[playerNumber - 1].transform.position = startingPositions[playerNumber - 1];
-            players[playerNumber-1].GetComponent<PlayerMovement>().enabled = enabled;
         }
     }
 }

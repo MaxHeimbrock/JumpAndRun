@@ -4,35 +4,54 @@ using UnityEngine;
 
 public class MoveRecorder : MonoBehaviour
 {
-    private Queue<Vector3> recording = new Queue<Vector3>();
+    public int levelLengthInFrames;
+    
+    private Vector3 initialPos;
+    private List<Vector3> recording = new List<Vector3>();
     private bool isRecording = false;
     private bool playback = false;
     private Transform objectToRecord;
+    private int playbackFrameIndex = 0;
     
-    // Start is called before the first frame update
-    void Start()
+    public delegate void LevelTimeUpCallback();
+    public LevelTimeUpCallback callback;
+    
+    public void SetLevelLenght(int levelLengthInSeconds)
     {
-        
+        levelLengthInFrames = levelLengthInSeconds * 50;
     }
 
     void FixedUpdate()
     {
-        if (isRecording)
+        if (isRecording && recording.Count <= levelLengthInFrames)
         {
-            recording.Enqueue(objectToRecord.position);
+            recording.Add(objectToRecord.position);
+        }
+        else if (isRecording && recording.Count > levelLengthInFrames)
+        {
+            isRecording = false;
+            callback();
         }
 
         if (playback && recording.Count > 0)
         {
-            objectToRecord.transform.position = recording.Dequeue();
+            objectToRecord.transform.position = recording[playbackFrameIndex];
+            playbackFrameIndex++;
+            
+            if (playbackFrameIndex == recording.Count)
+            {
+                playbackFrameIndex = 0;
+            }
         }
     }
 
-    public void StartRecording(Transform objectToRecord)
+    public void ResetRecording()
     {
-        this.objectToRecord = objectToRecord;
-        isRecording = true;
+        playbackFrameIndex = 0;
+        isRecording = false;
         playback = false;
+        recording = new List<Vector3>();
+        objectToRecord.transform.position = initialPos;
     }
 
     public void StopRecording()
@@ -40,9 +59,24 @@ public class MoveRecorder : MonoBehaviour
         isRecording = false;
     }
 
+    public void StartRecording(Transform objectToRecord, LevelTimeUpCallback callback)
+    {
+        this.callback = callback;
+        this.objectToRecord = objectToRecord;
+        initialPos = objectToRecord.position;
+        ResetRecording();
+        isRecording = true;
+    }
+
     public void Playback()
     {
+        playbackFrameIndex = 0;
         isRecording = false;
         playback = true;
+    }
+
+    public void ResetPlayback()
+    {
+        playbackFrameIndex = 0;
     }
 }
