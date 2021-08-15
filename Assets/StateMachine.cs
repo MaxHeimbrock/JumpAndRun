@@ -95,6 +95,23 @@ public class StateMachine : MonoBehaviour
         }
     }
 
+    public void CheckCollectibles()
+    {
+        bool won = true;
+        
+        foreach (Collectible collectible in levelInfo.collectibles)
+        {
+            won = won && collectible.collected;
+        }
+
+        if (won)
+        {
+            currentPlayer++;
+            timebar.ChangePlayer(levelInfo.players.Length);
+            SetState(new End(this, state.frame));
+        }
+    }
+    
     #region States
 
     protected class Neutral : State
@@ -294,7 +311,9 @@ public class StateMachine : MonoBehaviour
             stateMachine.timebar.ChangePlayer(stateMachine.currentPlayer);
             if (stateMachine.currentPlayer == stateMachine.levelInfo.players.Length)
             {
-                stateMachine.SetState(new End(stateMachine));
+                // GAME IS NOT WON
+                Debug.Log("Game is not won yet");
+                // stateMachine.SetState(new End(stateMachine));
             }
             else
             {
@@ -305,8 +324,11 @@ public class StateMachine : MonoBehaviour
 
     protected class End : State
     {
-        public End(StateMachine stateMachine) : base(stateMachine)
+        private int finalFrame;
+        
+        public End(StateMachine stateMachine, int finalFrame) : base(stateMachine)
         {
+            this.finalFrame = finalFrame;
             Debug.Log("End");
         }
 
@@ -318,12 +340,12 @@ public class StateMachine : MonoBehaviour
                 GoToPreviousState();
             }
         }
-        
+
         public override void FixedUpdate()
         {
             stateMachine.PlaybackAllBefore(frame);
             frame++;
-            if (frame >= stateMachine.levelInfo.levelLengthInSeconds * 50)
+            if (frame >= finalFrame)
             {
                 frame = 0;
             }
@@ -345,7 +367,7 @@ public class StateMachine : MonoBehaviour
 public abstract class State
 {
     protected StateMachine stateMachine;
-    protected int frame = 0;
+    public int frame = 0;
         
     public State(StateMachine stateMachine)
     {

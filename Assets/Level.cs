@@ -9,9 +9,13 @@ public class Level : MonoBehaviour
     [HideInInspector] public MoveRecorder[] moveRecorders;
     public Color[] timebarColors;
 
+    public Collectible[] collectibles;
+
     // Start is called before the first frame update
     void Start()
     {
+        collectibles = FindObjectsOfType<Collectible>();
+        
         moveRecorders = new MoveRecorder[players.Length];
         charControllers = new CharacterController2D[players.Length];
         
@@ -22,9 +26,5 @@ public class Level : MonoBehaviour
             moveRecorders[i].SetLevelLenght(levelLengthInSeconds);
         }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
+    
 }
