@@ -2,20 +2,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class StateMachine : MonoBehaviour
 {
     public string stateName;
 
     private Level levelInfo;
-    public Timebar timebar;
+    [FormerlySerializedAs("timebar")] public UI ui;
     protected State state;
     private int currentPlayer = -1;
-    private PlayerMovement playerMovement;
 
     public void Start()
     {
-        playerMovement = GetComponent<PlayerMovement>();
         levelInfo = GetComponent<Level>();
         
         state = new Neutral(this);
@@ -137,9 +136,10 @@ public class StateMachine : MonoBehaviour
 
         if (won)
         {
+            state.FixedUpdate(); // Save winning pos as well
             levelInfo.charControllers[currentPlayer].playerIsActive = false;
             currentPlayer++;
-            timebar.ChangePlayer(levelInfo.players.Length);
+            ui.ChangePlayer(levelInfo.players.Length);
             SetState(new End(this, state.frame));
         }
     }
@@ -164,13 +164,16 @@ public class StateMachine : MonoBehaviour
         public override void GoToNextState()
         {
             stateMachine.currentPlayer++;
-            stateMachine.timebar.ChangePlayer(stateMachine.currentPlayer);
+            stateMachine.ui.ChangePlayer(stateMachine.currentPlayer);
             stateMachine.SetState(new Ready(stateMachine));
         }
     }
     
     protected class Ready : State
     {
+        private float horizontalMove;
+        private bool jump;
+        
         public Ready(StateMachine stateMachine) : base(stateMachine)
         {
         }
@@ -179,7 +182,7 @@ public class StateMachine : MonoBehaviour
         {
             stateMachine.ResetAllPlayback();
             stateMachine.ResetCollectibles();
-            stateMachine.timebar.MoveIndicator(0);
+            stateMachine.ui.MoveIndicator(0);
         }
 
         public override void Update()
@@ -189,8 +192,11 @@ public class StateMachine : MonoBehaviour
             {
                 GoToPreviousState();
             }
+
+            horizontalMove = Input.GetAxisRaw("Horizontal");
+            jump = Input.GetButtonDown("Jump");
             
-            if (Input.GetAxisRaw("Horizontal") != 0 || (Input.GetButtonDown("Jump")))
+            if (horizontalMove != 0 || jump)
             {
                 GoToNextState();
             }
@@ -198,13 +204,13 @@ public class StateMachine : MonoBehaviour
 
         public override void GoToNextState()
         {
-            stateMachine.SetState(new Playing(stateMachine));
+            stateMachine.SetState(new Playing(stateMachine, horizontalMove, jump));
         }
         
         public override void GoToPreviousState()
         {
             stateMachine.currentPlayer--;
-            stateMachine.timebar.ChangePlayer(stateMachine.currentPlayer);
+            stateMachine.ui.ChangePlayer(stateMachine.currentPlayer);
             if (stateMachine.currentPlayer == -1)
             {
                 stateMachine.SetState(new Neutral(stateMachine));
@@ -226,8 +232,10 @@ public class StateMachine : MonoBehaviour
         private float horizontalMove = 0f;
         private bool jump = false;
 
-        public Playing(StateMachine stateMachine) : base(stateMachine)
+        public Playing(StateMachine stateMachine, float horizontalMove, bool jump) : base(stateMachine)
         {
+            this.horizontalMove = horizontalMove;
+            this.jump = jump;
         }
 
         public override void Enter()
@@ -270,7 +278,7 @@ public class StateMachine : MonoBehaviour
             stateMachine.PlaybackAllBefore(frame);
             moveRecorder.RecordFrame(frame);
             frame++;
-            stateMachine.timebar.MoveIndicator(frame);
+            stateMachine.ui.MoveIndicator(frame);
 
             if (frame >= stateMachine.levelInfo.levelLengthInSeconds * 50)
             {
@@ -307,7 +315,7 @@ public class StateMachine : MonoBehaviour
             {
                 frame = 0;
             }
-            stateMachine.timebar.MoveIndicator(frame);
+            stateMachine.ui.MoveIndicator(frame);
         }
 
         public override void Update()
@@ -334,7 +342,7 @@ public class StateMachine : MonoBehaviour
         public override void GoToNextState()
         {
             stateMachine.currentPlayer++;
-            stateMachine.timebar.ChangePlayer(stateMachine.currentPlayer);
+            stateMachine.ui.ChangePlayer(stateMachine.currentPlayer);
             stateMachine.SetState(new Ready(stateMachine));
         }
     }
@@ -346,7 +354,6 @@ public class StateMachine : MonoBehaviour
         public End(StateMachine stateMachine, int finalFrame) : base(stateMachine)
         {
             this.finalFrame = finalFrame;
-            Debug.Log("End");
         }
 
         public override void Update()
@@ -362,17 +369,17 @@ public class StateMachine : MonoBehaviour
         {
             stateMachine.PlaybackAllBefore(frame);
             frame++;
-            if (frame >= finalFrame)
+            if (frame > finalFrame)
             {
                 frame = 0;
             }
-            stateMachine.timebar.MoveIndicator(frame);
+            stateMachine.ui.MoveIndicator(frame);
         }
         
         public override void GoToPreviousState()
         {
             stateMachine.currentPlayer--;
-            stateMachine.timebar.ChangePlayer(stateMachine.currentPlayer);
+            stateMachine.ui.ChangePlayer(stateMachine.currentPlayer);
             stateMachine.SetState(new Ready(stateMachine));
             
             stateMachine.levelInfo.moveRecorders[stateMachine.currentPlayer].ResetRecording();

@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Timebar : MonoBehaviour
+public class UI : MonoBehaviour
 {
     public Level level;
+    public Color winColor;
     
     public Image timebar_background;
     public GameObject indicator;
@@ -17,8 +18,11 @@ public class Timebar : MonoBehaviour
     public float maxTime;
     public float timer = 0;
 
+    private Camera cam;
+
     private void Start()
     {
+        cam = Camera.main;
         colors = level.timebarColors;
         maxTime = level.levelLengthInSeconds;
         noPlayers = level.players.Length;
@@ -33,15 +37,18 @@ public class Timebar : MonoBehaviour
     {
         if (player == -1)
         {
-            timebar_background.color = Color.white;
+            //timebar_background.color = Color.white;
+            cam.backgroundColor = Color.grey;
         }
         else if (player >= 0 && player < noPlayers)
         {
-            timebar_background.color = colors[player];    
+            //timebar_background.color = colors[player];    
+            cam.backgroundColor = colors[player];    
         }
         else if (player >= noPlayers)
         {
-            timebar_background.color = Color.grey;   
+            //timebar_background.color = Color.grey;
+            cam.backgroundColor = winColor;
         }
     }
 }
