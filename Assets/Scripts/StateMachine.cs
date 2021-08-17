@@ -81,6 +81,11 @@ public class StateMachine : MonoBehaviour
 
     public void PlaybackAllBefore(int frame)
     {
+        if (frame == 0)
+        {
+            ResetCollectibles();
+        }
+
         for (int i = 0; i < currentPlayer; i++)
         {
             levelInfo.moveRecorders[i].PlaybackFrame(frame);
@@ -89,14 +94,40 @@ public class StateMachine : MonoBehaviour
     
     public void PlaybackAllAndCurrent(int frame)
     {
+        if (frame == 0)
+        {
+            ResetCollectibles();
+        }
+        
         for (int i = 0; i < currentPlayer+1; i++)
         {
             levelInfo.moveRecorders[i].PlaybackFrame(frame);
         }
     }
 
-    public void CheckCollectibles()
+    public void ResetCollectibles()
     {
+        foreach (var collectible in levelInfo.collectibles)
+        {
+            collectible.Reset();
+        } 
+    }
+
+    public void ResetAllPlayback()
+    {
+        for (int i = 0; i < currentPlayer; i++)
+        {
+            levelInfo.moveRecorders[i].ResetPlayback();
+        }
+    }
+
+    public void CollectibleCollected()
+    {
+        if (state.GetType() == typeof(End))
+        {
+            return;
+        }
+        
         bool won = true;
         
         foreach (Collectible collectible in levelInfo.collectibles)
@@ -106,6 +137,7 @@ public class StateMachine : MonoBehaviour
 
         if (won)
         {
+            levelInfo.charControllers[currentPlayer].playerIsActive = false;
             currentPlayer++;
             timebar.ChangePlayer(levelInfo.players.Length);
             SetState(new End(this, state.frame));
@@ -143,6 +175,13 @@ public class StateMachine : MonoBehaviour
         {
         }
 
+        public override void Enter()
+        {
+            stateMachine.ResetAllPlayback();
+            stateMachine.ResetCollectibles();
+            stateMachine.timebar.MoveIndicator(0);
+        }
+
         public override void Update()
         {
             // Backward
@@ -154,18 +193,6 @@ public class StateMachine : MonoBehaviour
             if (Input.GetAxisRaw("Horizontal") != 0 || (Input.GetButtonDown("Jump")))
             {
                 GoToNextState();
-            }
-        }
-        
-        public override void FixedUpdate()
-        {
-            stateMachine.PlaybackAllBefore(frame);
-            frame++;
-            stateMachine.timebar.MoveIndicator(frame);
-            
-            if (frame >= stateMachine.levelInfo.levelLengthInSeconds * 50)
-            {
-                frame = 0;
             }
         }
 
@@ -193,6 +220,7 @@ public class StateMachine : MonoBehaviour
     {
         private CharacterController2D controller;
         private MoveRecorder moveRecorder;
+        private List<Collectible> collectiblesCollected;
         
         public float runSpeed = 40f;
         private float horizontalMove = 0f;
@@ -236,7 +264,7 @@ public class StateMachine : MonoBehaviour
         
         public override void FixedUpdate()
         {
-            controller.Move(horizontalMove * Time.fixedDeltaTime, false, jump);
+            controller.Move(horizontalMove * Time.fixedDeltaTime, jump);
             jump = false;
             
             stateMachine.PlaybackAllBefore(frame);
@@ -262,8 +290,6 @@ public class StateMachine : MonoBehaviour
         {
             controller.playerIsActive = false;
             stateMachine.SetState(new Review(stateMachine));
-            moveRecorder.StopRecording();
-            moveRecorder.Playback();
         }
     }
     
@@ -309,16 +335,7 @@ public class StateMachine : MonoBehaviour
         {
             stateMachine.currentPlayer++;
             stateMachine.timebar.ChangePlayer(stateMachine.currentPlayer);
-            if (stateMachine.currentPlayer == stateMachine.levelInfo.players.Length)
-            {
-                // GAME IS NOT WON
-                Debug.Log("Game is not won yet");
-                // stateMachine.SetState(new End(stateMachine));
-            }
-            else
-            {
-                stateMachine.SetState(new Ready(stateMachine));
-            }
+            stateMachine.SetState(new Ready(stateMachine));
         }
     }
 
@@ -357,6 +374,7 @@ public class StateMachine : MonoBehaviour
             stateMachine.currentPlayer--;
             stateMachine.timebar.ChangePlayer(stateMachine.currentPlayer);
             stateMachine.SetState(new Ready(stateMachine));
+            
             stateMachine.levelInfo.moveRecorders[stateMachine.currentPlayer].ResetRecording();
         }
     }

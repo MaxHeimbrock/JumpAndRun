@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4362765045562935009}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: CeilingCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4362765046496598551}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73,7 +73,7 @@ GameObject:
   - component: {fileID: 4362765046821953867}
   - component: {fileID: 4362765046821953866}
   - component: {fileID: 4362765046821953865}
-  - component: {fileID: 4362765046821953864}
+  - component: {fileID: 1524963372}
   m_Layer: 6
   m_Name: Player2
   m_TagString: Untagged
@@ -224,17 +224,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &4362765046821953864
+--- !u!114 &1524963372
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4362765046821953871}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a66792a4a13bad842af262e2acbad341, type: 3}
+  m_Script: {fileID: 11500000, guid: 3945f30d6213d5d4f971b773dfeda72c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 4362765046821953876}
-  runSpeed: 30
+  levelLengthInFrames: 0

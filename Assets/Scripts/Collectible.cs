@@ -7,27 +7,29 @@ public class Collectible : MonoBehaviour
 {
     public bool collected = false;
     private StateMachine stateMachine;
+    private Renderer myRenderer;
+    private Collider2D myCollider2D;
 
     private void Start()
     {
         stateMachine = FindObjectOfType<StateMachine>();
+        myRenderer = GetComponent<Renderer>();
+        myCollider2D = GetComponent<Collider2D>();
     }
 
-    private void OnCollisionEnter2D(Collision2D collision2D)
+    private void OnTriggerEnter2D()
     {
-        Debug.Log("Collected " + name);
-        
         collected = true;
-        GetComponent<Renderer>().enabled = false;
-        GetComponent<Collider2D>().enabled = false;
+        myRenderer.enabled = false;
+        myCollider2D.enabled = false;
         
-        stateMachine.CheckCollectibles();
+        stateMachine.CollectibleCollected();
     }
 
     public void Reset()
     {
         collected = false;
-        GetComponent<Renderer>().enabled = true;
-        GetComponent<Collider>().enabled = true;
+        myRenderer.enabled = true;
+        myCollider2D.enabled = true;
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,10 +9,7 @@ public class MoveRecorder : MonoBehaviour
     
     private Vector3 initialPos;
     private Vector3[] recording;
-    private bool isRecording = false;
-    private bool playback = false;
     private Transform objectToRecord;
-    private int playbackFrameIndex = 0;
 
     public void SetLevelLenght(int levelLengthInSeconds)
     {
@@ -21,7 +19,15 @@ public class MoveRecorder : MonoBehaviour
 
     public void PlaybackFrame(int frame)
     {
-        objectToRecord.transform.position = recording[frame];
+        try
+        {
+            objectToRecord.transform.position = recording[frame];
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("error in frame " + frame + "\n" + e);
+        }
+        
     }
 
     public void RecordFrame(int frame)
@@ -31,16 +37,8 @@ public class MoveRecorder : MonoBehaviour
 
     public void ResetRecording()
     {
-        playbackFrameIndex = 0;
-        isRecording = false;
-        playback = false;
         recording = new Vector3[levelLengthInFrames];
         objectToRecord.transform.position = initialPos;
-    }
-
-    public void StopRecording()
-    {
-        isRecording = false;
     }
 
     public void StartRecording(Transform objectToRecord)
@@ -48,18 +46,9 @@ public class MoveRecorder : MonoBehaviour
         this.objectToRecord = objectToRecord;
         initialPos = objectToRecord.position;
         ResetRecording();
-        isRecording = true;
     }
-
-    public void Playback()
-    {
-        playbackFrameIndex = 0;
-        isRecording = false;
-        playback = true;
-    }
-
     public void ResetPlayback()
     {
-        playbackFrameIndex = 0;
+        objectToRecord.position = initialPos;
     }
 }
