@@ -21,13 +21,20 @@ public class MoveRecorder : MonoBehaviour
     {
         try
         {
-            objectToRecord.transform.position = recording[frame];
+            if (recording[frame] == Vector3.zero)
+            {
+                objectToRecord.transform.position = new Vector3(0, 10, 0);
+            }
+            else
+            {
+                objectToRecord.transform.position = recording[frame];    
+            }
+            
         }
         catch (Exception e)
         {
             Debug.LogWarning("error in frame " + frame + "\n" + e);
         }
-        
     }
 
     public void RecordFrame(int frame)

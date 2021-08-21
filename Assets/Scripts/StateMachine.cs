@@ -7,8 +7,11 @@ using UnityEngine.Serialization;
 public class StateMachine : MonoBehaviour
 {
     public string stateName;
-
+    public Transform playerIndicator;
+    public ProgressUI progressUI;
     private Level levelInfo;
+    public float[] playerTimes;
+    
     [FormerlySerializedAs("timebar")] public UI ui;
     protected State state;
     private int currentPlayer = -1;
@@ -16,7 +19,7 @@ public class StateMachine : MonoBehaviour
     public void Start()
     {
         levelInfo = GetComponent<Level>();
-        
+        playerTimes = new float[levelInfo.players.Length];
         state = new Neutral(this);
         state.Enter();
     }
@@ -138,8 +141,15 @@ public class StateMachine : MonoBehaviour
         {
             state.FixedUpdate(); // Save winning pos as well
             levelInfo.charControllers[currentPlayer].playerIsActive = false;
+            progressUI.SetPlayerFinished(currentPlayer);
+            playerTimes[currentPlayer] = (float)state.frame / 50;
+            ui.SetTotalTime(playerTimes);
+            
             currentPlayer++;
+
+            playerIndicator.gameObject.GetComponent<Renderer>().enabled = false;
             ui.ChangePlayer(levelInfo.players.Length);
+            
             SetState(new End(this, state.frame));
         }
     }
@@ -164,7 +174,14 @@ public class StateMachine : MonoBehaviour
         public override void GoToNextState()
         {
             stateMachine.currentPlayer++;
+            
+            stateMachine.playerIndicator.SetParent(stateMachine.levelInfo.players[stateMachine.currentPlayer].transform);
             stateMachine.ui.ChangePlayer(stateMachine.currentPlayer);
+            stateMachine.progressUI.SetPlayerPause(stateMachine.currentPlayer);
+            stateMachine.levelInfo.playerColliders[stateMachine.currentPlayer].isTrigger = false;
+            stateMachine.levelInfo.playerRenderers[stateMachine.currentPlayer].color = new Color(1, 1, 1, 1);
+            stateMachine.playerIndicator.gameObject.GetComponent<Renderer>().enabled = true;
+            
             stateMachine.SetState(new Ready(stateMachine));
         }
     }
@@ -205,18 +222,31 @@ public class StateMachine : MonoBehaviour
         public override void GoToNextState()
         {
             stateMachine.SetState(new Playing(stateMachine, horizontalMove, jump));
+            stateMachine.progressUI.SetPlayerPlay(stateMachine.currentPlayer);
         }
         
         public override void GoToPreviousState()
         {
+            stateMachine.progressUI.SetPlayerTransparent(stateMachine.currentPlayer);
+            stateMachine.levelInfo.playerColliders[stateMachine.currentPlayer].isTrigger = true;
+            stateMachine.levelInfo.playerRenderers[stateMachine.currentPlayer].color = new Color(1, 1, 1, 0.5f);
+            stateMachine.playerTimes[stateMachine.currentPlayer] = 0;
+            stateMachine.ui.SetTotalTime(stateMachine.playerTimes);
+            
             stateMachine.currentPlayer--;
+            
             stateMachine.ui.ChangePlayer(stateMachine.currentPlayer);
             if (stateMachine.currentPlayer == -1)
             {
+                stateMachine.playerIndicator.gameObject.GetComponent<Renderer>().enabled = false;
+                
                 stateMachine.SetState(new Neutral(stateMachine));
             }
             else
             {
+                stateMachine.progressUI.SetPlayerStop(stateMachine.currentPlayer);
+                stateMachine.playerIndicator.SetParent(stateMachine.levelInfo.players[stateMachine.currentPlayer].transform, false);
+                
                 stateMachine.SetState(new Review(stateMachine));
             }
         }
@@ -291,12 +321,20 @@ public class StateMachine : MonoBehaviour
             controller.playerIsActive = false;
             moveRecorder.ResetRecording();
             stateMachine.RestartAllPlaybacks();
+            stateMachine.progressUI.SetPlayerPause(stateMachine.currentPlayer);
+            stateMachine.playerTimes[stateMachine.currentPlayer] = 0;
+            stateMachine.ui.SetTotalTime(stateMachine.playerTimes);
+            
             stateMachine.SetState(new Ready(stateMachine));
         }
         
         public override void GoToNextState()
         {
             controller.playerIsActive = false;
+            stateMachine.progressUI.SetPlayerStop(stateMachine.currentPlayer);
+            stateMachine.playerTimes[stateMachine.currentPlayer] = (float)frame / 50;
+            stateMachine.ui.SetTotalTime(stateMachine.playerTimes);
+            
             stateMachine.SetState(new Review(stateMachine));
         }
     }
@@ -335,14 +373,26 @@ public class StateMachine : MonoBehaviour
 
         public override void GoToPreviousState()
         {
-            stateMachine.SetState(new Ready(stateMachine));
             stateMachine.levelInfo.moveRecorders[stateMachine.currentPlayer].ResetRecording();
+            stateMachine.progressUI.SetPlayerPause(stateMachine.currentPlayer);
+            stateMachine.playerTimes[stateMachine.currentPlayer] = 0;
+            stateMachine.ui.SetTotalTime(stateMachine.playerTimes);
+            
+            stateMachine.SetState(new Ready(stateMachine));
         }
 
         public override void GoToNextState()
         {
+            stateMachine.progressUI.SetPlayerFinished(stateMachine.currentPlayer);
+            
             stateMachine.currentPlayer++;
+            
+            stateMachine.playerIndicator.SetParent(stateMachine.levelInfo.players[stateMachine.currentPlayer].transform, false);
             stateMachine.ui.ChangePlayer(stateMachine.currentPlayer);
+            stateMachine.progressUI.SetPlayerPause(stateMachine.currentPlayer);
+            stateMachine.levelInfo.playerColliders[stateMachine.currentPlayer].isTrigger = false;
+            stateMachine.levelInfo.playerRenderers[stateMachine.currentPlayer].color = new Color(1, 1, 1, 1);
+            
             stateMachine.SetState(new Ready(stateMachine));
         }
     }
@@ -369,7 +419,7 @@ public class StateMachine : MonoBehaviour
         {
             stateMachine.PlaybackAllBefore(frame);
             frame++;
-            if (frame > finalFrame)
+            if (frame >= stateMachine.levelInfo.levelLengthInSeconds * 50)
             {
                 frame = 0;
             }
@@ -379,10 +429,15 @@ public class StateMachine : MonoBehaviour
         public override void GoToPreviousState()
         {
             stateMachine.currentPlayer--;
+            stateMachine.playerIndicator.gameObject.GetComponent<Renderer>().enabled = true;
+            stateMachine.playerIndicator.SetParent(stateMachine.levelInfo.players[stateMachine.currentPlayer].transform, false);
             stateMachine.ui.ChangePlayer(stateMachine.currentPlayer);
-            stateMachine.SetState(new Ready(stateMachine));
-            
+            stateMachine.progressUI.SetPlayerPause(stateMachine.currentPlayer);
             stateMachine.levelInfo.moveRecorders[stateMachine.currentPlayer].ResetRecording();
+            stateMachine.playerTimes[stateMachine.currentPlayer] = 0;
+            stateMachine.ui.SetTotalTime(stateMachine.playerTimes);
+            
+            stateMachine.SetState(new Ready(stateMachine));
         }
     }
 

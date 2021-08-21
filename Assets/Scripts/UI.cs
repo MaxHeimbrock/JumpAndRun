@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,14 +10,13 @@ public class UI : MonoBehaviour
     public Level level;
     public Color winColor;
     
-    public Image timebar_background;
-    public GameObject indicator;
+    private GameObject indicator;
+    private TextMeshProUGUI totalTime;
 
     private Color[] colors;
     private int noPlayers;
     
-    public float maxTime;
-    public float timer = 0;
+    [HideInInspector]public float maxTime;
 
     private Camera cam;
 
@@ -26,6 +26,9 @@ public class UI : MonoBehaviour
         colors = level.timebarColors;
         maxTime = level.levelLengthInSeconds;
         noPlayers = level.players.Length;
+
+        indicator = transform.Find("Timebar/indicator").gameObject;
+        totalTime = transform.Find("Timebar/Timer/TotalTime").GetComponent<TextMeshProUGUI>();
     }
 
     public void MoveIndicator(int frame)
@@ -50,5 +53,17 @@ public class UI : MonoBehaviour
             //timebar_background.color = Color.grey;
             cam.backgroundColor = winColor;
         }
+    }
+
+    public void SetTotalTime(float[] times)
+    {
+        float result = 0;
+
+        foreach (float time in times)
+        {
+            result += time;
+        }
+        
+        totalTime.SetText(result.ToString("00.00"));
     }
 }
