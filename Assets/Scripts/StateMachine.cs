@@ -139,9 +139,11 @@ public class StateMachine : MonoBehaviour
         if (won)
         {
             state.FixedUpdate(); // Save winning pos as well
+            
             levelInfo.charControllers[currentPlayer].playerIsActive = false;
             ui.SetPlayerFinished(currentPlayer);
-            playerTimes[currentPlayer] = (float)state.frame / 50;
+            playerTimes[currentPlayer] = ((float)state.frame / 50);
+            ui.SetPlayerTime(currentPlayer, ((float)state.frame / 50));
             ui.SetTotalTime(playerTimes);
             
             currentPlayer++;
@@ -297,6 +299,8 @@ public class StateMachine : MonoBehaviour
             {
                 jump = true;
             }
+
+            stateMachine.ui.SetPlayerTime(stateMachine.currentPlayer, ((float)frame / 50));
         }
         
         public override void FixedUpdate()
@@ -330,9 +334,10 @@ public class StateMachine : MonoBehaviour
         public override void GoToNextState()
         {
             controller.playerIsActive = false;
+            stateMachine.playerTimes[stateMachine.currentPlayer] = ((float) frame / 50);
             stateMachine.ui.SetPlayerStop(stateMachine.currentPlayer);
-            stateMachine.playerTimes[stateMachine.currentPlayer] = (float)frame / 50;
             stateMachine.ui.SetTotalTime(stateMachine.playerTimes);
+            stateMachine.ui.SetPlayerTime(stateMachine.currentPlayer, ((float)frame / 50));
             
             stateMachine.SetState(new Review(stateMachine));
         }

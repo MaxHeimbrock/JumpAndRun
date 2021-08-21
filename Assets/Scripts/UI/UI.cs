@@ -11,17 +11,17 @@ public class UI : MonoBehaviour
     public Color winColor;
     
     private GameObject indicator;
-    private TextMeshProUGUI totalTime;
-
     private Color[] colors;
     private int noPlayers;
-    
-    
+
     private Image[] thumbnails = new Image[4];
     private Sprite[] pause = new Sprite[4];
     private Sprite[] play = new Sprite[4];
     private Sprite[] stop = new Sprite[4];
     private Sprite[] finished = new Sprite[4];
+    private Image[] playerTimerImages = new Image[4];
+    private TextMeshProUGUI[] playerTimes = new TextMeshProUGUI[4];
+    private TextMeshProUGUI totalTime;
     
     [HideInInspector]public float maxTime;
 
@@ -62,6 +62,11 @@ public class UI : MonoBehaviour
             finished[i] = Resources.Load<Sprite>("UI/" + color + "_finished");
 
             thumbnails[i] = transform.Find("PlayerUI/"+color+"Player").GetComponent<Image>();
+            playerTimerImages[i] = transform.Find("PlayerUI/"+color+"Player/Timer").GetComponent<Image>();
+            playerTimes[i] = transform.Find("PlayerUI/"+color+"Player/Timer/Time").GetComponent<TextMeshProUGUI>();
+            playerTimerImages[i].color = new Color(1, 1, 1, 0);
+            playerTimes[i].SetText("00:00");
+            playerTimes[i].color = new Color(0, 0, 0, 0);
         }
     }
 
@@ -74,19 +79,21 @@ public class UI : MonoBehaviour
     {
         if (player == -1)
         {
-            //timebar_background.color = Color.white;
             cam.backgroundColor = Color.grey;
         }
         else if (player >= 0 && player < noPlayers)
         {
-            //timebar_background.color = colors[player];    
             cam.backgroundColor = colors[player];    
         }
         else if (player >= noPlayers)
         {
-            //timebar_background.color = Color.grey;
             cam.backgroundColor = winColor;
         }
+    }
+
+    public void SetPlayerTime(int player, float time)
+    {
+        playerTimes[player].text = time.ToString("00.00");
     }
 
     public void SetTotalTime(float[] times)
@@ -112,6 +119,10 @@ public class UI : MonoBehaviour
     {
         thumbnails[player].sprite = pause[player];
         thumbnails[player].color = new Color(1, 1, 1, 1);
+        
+        playerTimerImages[player].color = new Color(1, 1, 1, 1);
+        playerTimes[player].SetText("00:00");
+        playerTimes[player].color = new Color(0, 0, 0, 1);
     }
     
     public void SetPlayerPlay(int player)
@@ -128,6 +139,9 @@ public class UI : MonoBehaviour
     {
         thumbnails[player].sprite = finished[player];
         thumbnails[player].color = new Color(1, 1, 1, 0.5f);
+        
+        playerTimerImages[player].color = new Color(1, 1, 1, 0);
+        playerTimes[player].color = new Color(0, 0, 0, 0);
     }
 
     #endregion
