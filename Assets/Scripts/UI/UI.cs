@@ -67,6 +67,12 @@ public class UI : MonoBehaviour
             playerTimerImages[i].color = new Color(1, 1, 1, 0);
             playerTimes[i].SetText("00:00");
             playerTimes[i].color = new Color(0, 0, 0, 0);
+            
+            // Deactivate thumbnails not needed
+            if (level.players.Length == i)
+            {
+                thumbnails[i].color = new Color(1, 1, 1, 0);
+            }
         }
     }
 
