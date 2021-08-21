@@ -371,7 +371,10 @@ public class StateMachine : MonoBehaviour
             // Forward
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                GoToNextState();
+                if (stateMachine.currentPlayer < stateMachine.levelInfo.players.Length - 1)
+                {
+                    GoToNextState();    
+                }
             }
         }
 
