@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class Level : MonoBehaviour
 {
+    public int levelNumber;
     public int levelLengthInSeconds = 4;
     
     public GameObject[] players;

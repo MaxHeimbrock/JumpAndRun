@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 
 public class SaveAndLoad : MonoBehaviour
 {
-    private static string SAVE_FOLDER;
+    private string SAVE_FOLDER;
     public string mySaveName = "Max";
     private string mySaveFilePath;
     private ProgressSave saveFile;
@@ -17,11 +17,7 @@ public class SaveAndLoad : MonoBehaviour
     private void Awake()
     {
         SAVE_FOLDER = Application.dataPath + "/Saves/";
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
+        
         mySaveFilePath = SAVE_FOLDER + mySaveName + ".json";
         
         if (!Directory.Exists(SAVE_FOLDER))
@@ -30,27 +26,44 @@ public class SaveAndLoad : MonoBehaviour
         }
         if (!File.Exists(mySaveFilePath))
         {
-            SetUpProgressFile(mySaveFilePath);
+            SetUpProgressFile();
         }
-        
-        SetUpProgressFile(mySaveFilePath);
+        else
+        {
+            ReadProgressFile();
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void ReadProgressFile()
     {
-        
+        string saveFileJson = System.IO.File.ReadAllText(mySaveFilePath);
+        saveFile = JsonUtility.FromJson<ProgressSave>(saveFileJson);
     }
 
-    void SetUpProgressFile(string filePath)
+    void SetUpProgressFile()
     {
         saveFile = new ProgressSave();
         saveFile.AddLevelSave(new LevelSave(1, false, -1));
         saveFile.AddLevelSave(new LevelSave(2, false, -1));
         saveFile.AddLevelSave(new LevelSave(3, false, -1));
+    
+        RewriteSaveFile();
+    }
 
+    void RewriteSaveFile()
+    {
         string saveFileAsJson = JsonUtility.ToJson(saveFile);
-        System.IO.File.WriteAllText(filePath, saveFileAsJson);
-        Debug.Log("Created new ProgressFile for " + mySaveName + "\nIn path " + filePath);
+        System.IO.File.WriteAllText(mySaveFilePath, saveFileAsJson);
+    }
+    
+    public void SaveLevelWon(int levelNumber, float time)
+    {
+        saveFile.SetLevelSave(levelNumber, time);
+        RewriteSaveFile();
+    }
+
+    public ProgressSave GetProgress()
+    {
+        return saveFile;
     }
 }

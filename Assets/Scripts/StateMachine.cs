@@ -11,6 +11,8 @@ public class StateMachine : MonoBehaviour
     private Level levelInfo;
     public float[] playerTimes;
     public UI ui;
+    private SaveAndLoad saveAndLoad;
+    private AudioSource soundOutput;
     
     protected State state;
     private int currentPlayer = -1;
@@ -21,6 +23,8 @@ public class StateMachine : MonoBehaviour
         playerTimes = new float[levelInfo.players.Length];
         state = new Neutral(this);
         state.Enter();
+        saveAndLoad = GetComponent<SaveAndLoad>();
+        soundOutput = GetComponent<AudioSource>();
     }
 
     public void Update()
@@ -152,9 +156,23 @@ public class StateMachine : MonoBehaviour
             ui.ChangePlayer(levelInfo.players.Length);
             
             SetState(new End(this, state.frame));
+            
+            float totalTime = 0;
+            float oldTime = saveAndLoad.GetProgress().levelSaves[levelInfo.levelNumber-1].Time;
+        
+            foreach (float time in playerTimes)
+            {
+                totalTime += time;
+            }
+        
+            if (oldTime > totalTime || oldTime < 0) // -1 is default if not won already
+            {
+                soundOutput.Play();
+                saveAndLoad.SaveLevelWon(levelInfo.levelNumber, totalTime);    
+            }
         }
     }
-    
+
     #region States
 
     protected class Neutral : State

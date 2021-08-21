@@ -9,4 +9,10 @@ public class ProgressSave
     {
         levelSaves.Add(levelSave);
     }
+
+    public void SetLevelSave(int levelNumber, float time)
+    {
+        levelSaves[levelNumber - 1].Time = time;
+        levelSaves[levelNumber - 1].Completed = true;
+    }
 }
