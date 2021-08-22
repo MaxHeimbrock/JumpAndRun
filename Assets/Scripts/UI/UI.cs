@@ -8,7 +8,10 @@ using UnityEngine.UI;
 public class UI : MonoBehaviour
 {
     public Level level;
-    public Color winColor;
+    public Color winColorBackground;
+    private Image bestTimeBackground;
+    public Color winColorTimer;
+    public Color notWonColorTimer;
     
     private GameObject indicator;
     private Color[] colors;
@@ -22,6 +25,8 @@ public class UI : MonoBehaviour
     private Image[] playerTimerImages = new Image[4];
     private TextMeshProUGUI[] playerTimes = new TextMeshProUGUI[4];
     private TextMeshProUGUI totalTime;
+    private TextMeshProUGUI bestTimeTimer;
+    public float bestTime = -1;
     
     [HideInInspector]public float maxTime;
 
@@ -35,7 +40,10 @@ public class UI : MonoBehaviour
         noPlayers = level.players.Length;
 
         indicator = transform.Find("Timebar/indicator").gameObject;
-        totalTime = transform.Find("Timebar/Timer/TotalTime").GetComponent<TextMeshProUGUI>();
+        totalTime = transform.Find("Timer/TotalTime").GetComponent<TextMeshProUGUI>();
+        bestTimeTimer = transform.Find("BestTimeTimer/TotalTime").GetComponent<TextMeshProUGUI>();
+        bestTimeBackground = transform.Find("BestTimeTimer").GetComponent<Image>();
+        UpdateBestTime();
         
         string color = "";
 
@@ -93,7 +101,7 @@ public class UI : MonoBehaviour
         }
         else if (player >= noPlayers)
         {
-            cam.backgroundColor = winColor;
+            cam.backgroundColor = winColorBackground;
         }
     }
 
@@ -112,6 +120,25 @@ public class UI : MonoBehaviour
         }
         
         totalTime.SetText(result.ToString("00.00"));
+    }
+
+    public void SetBestTime(float time)
+    {
+        bestTime = time;
+    }
+    
+    public void UpdateBestTime()
+    {
+        if (bestTime < 0)
+        {
+            bestTimeTimer.text = "x";
+            bestTimeBackground.color = notWonColorTimer;
+        }
+        else
+        {
+            bestTimeTimer.text = bestTime.ToString("00.00");
+            bestTimeBackground.color = winColorTimer;    
+        }
     }
 
     #region PlayerThumbnails

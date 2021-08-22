@@ -40,7 +40,7 @@ public class SaveAndLoad : MonoBehaviour
         saveFile = JsonUtility.FromJson<ProgressSave>(saveFileJson);
     }
 
-    void SetUpProgressFile()
+    public void SetUpProgressFile()
     {
         saveFile = new ProgressSave();
         saveFile.AddLevelSave(new LevelSave(1, false, -1));

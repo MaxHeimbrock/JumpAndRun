@@ -49,5 +49,10 @@ public class Menu : MonoBehaviour
             levelButtons[number].GetComponent<Image>().color = colorLevelCompleted;
             levelButtons[number].transform.Find("Time").GetComponent<TextMeshProUGUI>().text = progress.levelSaves[number].Time.ToString("00.00");
         }
+        else
+        {
+            levelButtons[number].GetComponent<Image>().color = colorLevelNotCompleted;
+            levelButtons[number].transform.Find("Time").GetComponent<TextMeshProUGUI>().text = "x";
+        }
     }
 }

@@ -25,6 +25,7 @@ public class StateMachine : MonoBehaviour
         state.Enter();
         saveAndLoad = GetComponent<SaveAndLoad>();
         soundOutput = GetComponent<AudioSource>();
+        ui.SetBestTime(saveAndLoad.GetProgress().levelSaves[levelInfo.levelNumber-1].Time);
     }
 
     public void Update()
@@ -168,7 +169,9 @@ public class StateMachine : MonoBehaviour
             if (oldTime > totalTime || oldTime < 0) // -1 is default if not won already
             {
                 soundOutput.Play();
-                saveAndLoad.SaveLevelWon(levelInfo.levelNumber, totalTime);    
+                saveAndLoad.SaveLevelWon(levelInfo.levelNumber, totalTime);
+                ui.SetBestTime(totalTime);
+                ui.UpdateBestTime();
             }
         }
     }
