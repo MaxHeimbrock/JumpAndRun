@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 public class SaveAndLoad : MonoBehaviour
@@ -12,8 +13,7 @@ public class SaveAndLoad : MonoBehaviour
     public string mySaveName = "Max";
     private string mySaveFilePath;
     private ProgressSave saveFile;
-    
-    
+
     private void Awake()
     {
         SAVE_FOLDER = Application.dataPath + "/Saves/";
@@ -42,11 +42,20 @@ public class SaveAndLoad : MonoBehaviour
 
     public void SetUpProgressFile()
     {
+        if (SceneManager.GetActiveScene() != SceneManager.GetSceneByName("Menu"))
+        {
+            Debug.Log("Savefile can only be set up in menu");
+            return;
+        }
+
+        int numberOfLevels = transform.Find("Levels").childCount;
         saveFile = new ProgressSave();
-        saveFile.AddLevelSave(new LevelSave(1, false, -1));
-        saveFile.AddLevelSave(new LevelSave(2, false, -1));
-        saveFile.AddLevelSave(new LevelSave(3, false, -1));
-    
+
+        for (int i = 0; i < numberOfLevels; i++)
+        {
+            saveFile.AddLevelSave(new LevelSave(i+1, false, -1));    
+        }
+        
         RewriteSaveFile();
     }
 

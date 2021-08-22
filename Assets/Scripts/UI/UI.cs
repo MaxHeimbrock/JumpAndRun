@@ -77,7 +77,7 @@ public class UI : MonoBehaviour
             playerTimes[i].color = new Color(0, 0, 0, 0);
             
             // Deactivate thumbnails not needed
-            if (level.players.Length == i)
+            if (level.players.Length <= i)
             {
                 thumbnails[i].color = new Color(1, 1, 1, 0);
             }
