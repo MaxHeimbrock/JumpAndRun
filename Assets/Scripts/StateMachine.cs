@@ -90,6 +90,7 @@ public class StateMachine : MonoBehaviour
         if (frame == 0)
         {
             ResetCollectibles();
+            ResetAllObstacles();
         }
 
         for (int i = 0; i < currentPlayer; i++)
@@ -103,6 +104,7 @@ public class StateMachine : MonoBehaviour
         if (frame == 0)
         {
             ResetCollectibles();
+            ResetAllObstacles();
         }
         
         for (int i = 0; i < currentPlayer+1; i++)
@@ -125,6 +127,14 @@ public class StateMachine : MonoBehaviour
         {
             levelInfo.moveRecorders[i].ResetPlayback();
         }
+    }
+
+    public void ResetAllObstacles()
+    {
+        foreach (var obstacle in levelInfo.obstacles)
+        {
+            obstacle.Reset();
+        } 
     }
 
     public void CollectibleCollected()
@@ -221,6 +231,7 @@ public class StateMachine : MonoBehaviour
         {
             stateMachine.ResetAllPlayback();
             stateMachine.ResetCollectibles();
+            stateMachine.ResetAllObstacles();
             stateMachine.ui.MoveIndicator(0);
         }
 
@@ -359,7 +370,7 @@ public class StateMachine : MonoBehaviour
             stateMachine.ui.SetPlayerStop(stateMachine.currentPlayer);
             stateMachine.ui.SetTotalTime(stateMachine.playerTimes);
             stateMachine.ui.SetPlayerTime(stateMachine.currentPlayer, ((float)frame / 50));
-            
+
             stateMachine.SetState(new Review(stateMachine));
         }
     }

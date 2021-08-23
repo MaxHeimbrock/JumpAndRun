@@ -510,7 +510,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1501184180}
         m_TargetAssemblyTypeName: SaveAndLoad, Assembly-CSharp
-        m_MethodName: SetUpProgressFile
+        m_MethodName: CreateNewSaveFile
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -12,12 +12,14 @@ public class Level : MonoBehaviour
     [HideInInspector] public MoveRecorder[] moveRecorders;
     public Color[] timebarColors;
 
-    public Collectible[] collectibles;
+    [HideInInspector]public Collectible[] collectibles;
+    [HideInInspector]public Obstacle[] obstacles;
 
     // Start is called before the first frame update
     void Start()
     {
         collectibles = FindObjectsOfType<Collectible>();
+        obstacles = FindObjectsOfType<Obstacle>();
         
         moveRecorders = new MoveRecorder[players.Length];
         charControllers = new CharacterController2D[players.Length];

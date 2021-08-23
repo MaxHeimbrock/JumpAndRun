@@ -26,21 +26,21 @@ public class SaveAndLoad : MonoBehaviour
         }
         if (!File.Exists(mySaveFilePath))
         {
-            SetUpProgressFile();
+            CreateNewSaveFile();
         }
         else
         {
-            ReadProgressFile();
+            LoadSaveFile();
         }
     }
 
-    private void ReadProgressFile()
+    public void LoadSaveFile()
     {
         string saveFileJson = System.IO.File.ReadAllText(mySaveFilePath);
         saveFile = JsonUtility.FromJson<ProgressSave>(saveFileJson);
     }
 
-    public void SetUpProgressFile()
+    public void CreateNewSaveFile()
     {
         if (SceneManager.GetActiveScene() != SceneManager.GetSceneByName("Menu"))
         {
