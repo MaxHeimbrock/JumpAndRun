@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class PressurePlate : MonoBehaviour
 {
+    public Sprite active;
+    public Sprite passive;
+    private SpriteRenderer sprite;
+    
     public Obstacle obstacle;
     private int count = 0;
     
     // Start is called before the first frame update
     void Start()
     {
-        
+        sprite = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -23,6 +27,7 @@ public class PressurePlate : MonoBehaviour
     {
         count++;
         obstacle.MoveObstacleToEnd();
+        sprite.sprite = active;
     }
 
     void OnTriggerExit2D(Collider2D col)
@@ -30,7 +35,21 @@ public class PressurePlate : MonoBehaviour
         count--;
         if (count == 0)
         {
-            obstacle.MoveObstacleToStart();    
+            obstacle.MoveObstacleToStart();
+            sprite.sprite = passive;
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = new Color(0, 0, 1, 0.5f);
+
+        Vector3 startPos = transform.position;
+        Vector3 endPos = obstacle.transform.position;
+        
+        if (!Application.isPlaying)
+        {
+            Gizmos.DrawLine(startPos, endPos);
         }
     }
 }

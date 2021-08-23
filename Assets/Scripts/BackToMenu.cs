@@ -5,6 +5,14 @@ using UnityEngine.SceneManagement;
 
 public class BackToMenu : MonoBehaviour
 {
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            GoToMenu();
+        }
+    }
+    
     public void GoToMenu()
     {
         SceneManager.LoadScene("Menu");

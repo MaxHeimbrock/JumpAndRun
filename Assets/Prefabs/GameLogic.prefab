@@ -50,6 +50,8 @@ MonoBehaviour:
   playerIndicator: {fileID: 0}
   playerTimes: []
   ui: {fileID: 0}
+  winningSound: {fileID: 8300000, guid: b0f4928799b438f45ac157948e9deee7, type: 3}
+  replayStart: {fileID: 0}
 --- !u!114 &899738615183161625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,6 +81,7 @@ MonoBehaviour:
   - {r: 0.7324519, g: 0.8396226, b: 0.7089266, a: 1}
   - {r: 1, g: 0.6556604, b: 0.94529074, a: 1}
   collectibles: []
+  obstacles: []
 --- !u!114 &899738615183161626
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -9,7 +9,7 @@ public class ShowControls : MonoBehaviour
     {
         if (controlsImageActive == true)
         {
-            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Backspace))
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Backspace) || Input.GetKeyDown(KeyCode.Escape))
             {
                 HideTheControls();
             }

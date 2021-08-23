@@ -17,6 +17,10 @@ public class UI : MonoBehaviour
     private Color[] colors;
     private int noPlayers;
 
+    private Transform timebar;
+    public GameObject timebar_big;
+    public GameObject timebar_small;
+    
     private Image[] thumbnails = new Image[4];
     private Sprite[] pause = new Sprite[4];
     private Sprite[] play = new Sprite[4];
@@ -39,11 +43,13 @@ public class UI : MonoBehaviour
         maxTime = level.levelLengthInSeconds;
         noPlayers = level.players.Length;
 
+        timebar = transform.Find("Timebar");
         indicator = transform.Find("Timebar/indicator").gameObject;
         totalTime = transform.Find("Timer/TotalTime").GetComponent<TextMeshProUGUI>();
         bestTimeTimer = transform.Find("BestTimeTimer/TotalTime").GetComponent<TextMeshProUGUI>();
         bestTimeBackground = transform.Find("BestTimeTimer").GetComponent<Image>();
         UpdateBestTime();
+        SetupTimebar();
         
         string color = "";
 
@@ -138,6 +144,31 @@ public class UI : MonoBehaviour
         {
             bestTimeTimer.text = bestTime.ToString("00.00");
             bestTimeBackground.color = winColorTimer;    
+        }
+    }
+
+    private void SetupTimebar()
+    {
+        int timebar_width = 12;
+        float spacing = timebar_width / ((2 * maxTime) - 1);
+        Vector3 pos;
+        GameObject helper;
+        float x;
+        for (int i = 0; i < (2*maxTime) - 1; i++)
+        {
+            x = (i * spacing) - 6;
+            pos = new Vector3(x, 0, 0);
+
+            if (i % 2 == 0)
+            {
+                helper = Instantiate(timebar_small, timebar);
+            }
+            else
+            {
+                helper = Instantiate(timebar_big, timebar);    
+            }
+            
+            helper.transform.localPosition = pos;
         }
     }
 

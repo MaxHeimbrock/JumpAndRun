@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
+    public Transform endPositionGameObject;
+    
     private Vector3 startPosition;
     private Vector3 endPosition;
 
@@ -16,11 +18,11 @@ public class Obstacle : MonoBehaviour
     void Start()
     {
         startPosition = transform.position;
-        endPosition = transform.Find("MoveToEnd").position;
+        endPosition = endPositionGameObject.position;
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (currentlyGoingTo == ObstacleState.End)
         {
@@ -59,5 +61,29 @@ public class Obstacle : MonoBehaviour
     {
         timer = 0;
         transform.position = startPosition;
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(1, 0, 0, 0.5f);
+        Vector3 startPos;
+        Vector3 endPos;
+        if (Application.isPlaying)
+        {
+            startPos = startPosition;
+            endPos = endPosition;
+            if (timer > 0)
+            {
+                Gizmos.DrawCube(startPos, new Vector3(1, 1, 1));    
+            }
+        }
+        else
+        {
+            startPos = transform.position;
+            endPos = endPositionGameObject.position;
+        }
+        
+        Gizmos.DrawCube(endPos, new Vector3(1, 1, 1));
+        Gizmos.DrawLine(startPos, endPos);
     }
 }
