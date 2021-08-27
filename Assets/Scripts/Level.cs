@@ -1,11 +1,13 @@
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Level : MonoBehaviour
 {
-    public int levelNumber;
     public int levelLengthInSeconds = 4;
     
     public GameObject[] players;
+    [HideInInspector]public int levelNumber;
     [HideInInspector]public Collider2D[] playerColliders;
     [HideInInspector]public SpriteRenderer[] playerRenderers;
     [HideInInspector] public CharacterController2D[] charControllers;
@@ -18,6 +20,18 @@ public class Level : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        char[] levelNameCharArray = SceneManager.GetActiveScene().name.ToCharArray();
+        if (levelNameCharArray.Length == 6)
+        {
+            levelNumber = levelNameCharArray[5]-48;    
+        }
+        else if (levelNameCharArray.Length == 7)
+        {
+            levelNumber = (levelNameCharArray[5] - 48) * 10;
+            levelNumber += levelNameCharArray[6] - 48;
+        }
+        
+        int x = (int)"5".ToCharArray()[0];
         collectibles = FindObjectsOfType<Collectible>();
         obstacles = FindObjectsOfType<Obstacle>();
         

@@ -9,14 +9,24 @@ public class Menu : MonoBehaviour
 {
     private SaveAndLoad saveAndLoad;
     private ProgressSave progress;
-    public GameObject[] levelButtons;
-
+    private GameObject[] levelButtons;
+    private Transform levelsParent;
+    
     public Color colorLevelCompleted;
     public Color colorLevelNotCompleted;
-    
+
     // Start is called before the first frame update
     void Start()
     {
+        levelsParent = transform.Find("Levels");
+        Button[] levels = levelsParent.GetComponentsInChildren<Button>();
+        levelButtons = new GameObject[levels.Length];
+
+        for (int i = 0; i < levels.Length; i++)
+        {
+            levelButtons[i] = levels[i].gameObject;
+        }
+        
         saveAndLoad = GetComponent<SaveAndLoad>();
         UpdateProgress();
     }
@@ -29,7 +39,7 @@ public class Menu : MonoBehaviour
 
     public void StartLevel(int level)
     {
-        SceneManager.LoadScene("Level" + level);
+        //SceneManager.LoadScene("Level" + level);
     }
 
     public void UpdateProgress()
