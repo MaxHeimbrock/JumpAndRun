@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -31,15 +32,12 @@ public class Menu : MonoBehaviour
         UpdateProgress();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
-    }
-
-    public void StartLevel(int level)
-    {
-        //SceneManager.LoadScene("Level" + level);
+        if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     public void UpdateProgress()
