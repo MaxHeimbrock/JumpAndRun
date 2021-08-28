@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class Level : MonoBehaviour
 {
-    public static int NUMBER_OF_LEVELS = 8;
+    public static int NUMBER_OF_LEVELS = 10;
     
     public int levelLengthInSeconds = 4;
     
