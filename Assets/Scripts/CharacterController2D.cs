@@ -68,6 +68,7 @@ public class CharacterController2D : MonoBehaviour
 
 		if (!m_Grounded)
 		{
+			m_CeilingCheck.enabled = false;
 			transform.SetParent(null);
 		}
 	}
