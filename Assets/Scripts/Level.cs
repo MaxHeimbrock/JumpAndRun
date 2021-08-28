@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class Level : MonoBehaviour
 {
-    public static int NUMBER_OF_LEVELS = 6;
+    public static int NUMBER_OF_LEVELS = 8;
     
     public int levelLengthInSeconds = 4;
     
@@ -20,7 +20,7 @@ public class Level : MonoBehaviour
     [HideInInspector]public Obstacle[] obstacles;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         levelNumber = Int32.Parse(SceneManager.GetActiveScene().name.Split('l')[1]);
         

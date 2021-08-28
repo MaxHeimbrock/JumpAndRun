@@ -36,7 +36,7 @@ public class Menu : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
-            gameObject.SetActive(false);
+            levelsParent.gameObject.SetActive(false);
         }
     }
 
