@@ -154,16 +154,16 @@ public class UI : MonoBehaviour
     private void SetupTimebar()
     {
         int timebar_width = 12;
-        float spacing = timebar_width / ((2 * maxTime) - 1);
+        float spacing = timebar_width / ((2 * maxTime));
         Vector3 pos;
         GameObject helper;
         float x;
-        for (int i = 0; i < (2*maxTime) - 1; i++)
+        for (int i = 1; i < (2*maxTime); i++)
         {
             x = (i * spacing) - 6;
             pos = new Vector3(x, 0, 0);
 
-            if (i % 2 == 0)
+            if (i % 2 == 1)
             {
                 helper = Instantiate(timebar_small, timebar);
             }
