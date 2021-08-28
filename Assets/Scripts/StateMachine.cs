@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 public class StateMachine : MonoBehaviour
@@ -169,7 +170,6 @@ public class StateMachine : MonoBehaviour
             currentPlayer++;
 
             playerIndicator.SetIndicatorInvisible();
-            //playerIndicator.gameObject.GetComponent<Renderer>().enabled = false;
             ui.ChangePlayer(levelInfo.players.Length);
             
             SetState(new End(this, state.frame));
@@ -219,7 +219,6 @@ public class StateMachine : MonoBehaviour
             stateMachine.ui.SetPlayerPause(stateMachine.currentPlayer);
             stateMachine.levelInfo.playerColliders[stateMachine.currentPlayer].isTrigger = false;
             stateMachine.levelInfo.playerRenderers[stateMachine.currentPlayer].color = new Color(1, 1, 1, 1);
-            //stateMachine.playerIndicator.SetIndicatorActive();
             stateMachine.playerIndicator.gameObject.GetComponent<Renderer>().enabled = true;
             
             stateMachine.SetState(new Ready(stateMachine));
@@ -281,7 +280,6 @@ public class StateMachine : MonoBehaviour
             if (stateMachine.currentPlayer == -1)
             {
                 stateMachine.playerIndicator.SetIndicatorInvisible();
-                //stateMachine.playerIndicator.gameObject.GetComponent<Renderer>().enabled = false;
                 
                 stateMachine.SetState(new Neutral(stateMachine));
             }
@@ -462,6 +460,18 @@ public class StateMachine : MonoBehaviour
 
         public override void Update()
         {
+            // Forward
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                int levelNumber = Int32.Parse(SceneManager.GetActiveScene().name.Split('l')[1]) + 1;
+                string nextLevelSceneName = "Level" + levelNumber;
+                if (levelNumber > Level.NUMBER_OF_LEVELS)
+                {
+                    nextLevelSceneName = "Menu";
+                }
+                SceneManager.LoadScene(nextLevelSceneName);
+            }
+            
             // Backward
             if (Input.GetKeyDown(KeyCode.Backspace))
             {
@@ -484,7 +494,6 @@ public class StateMachine : MonoBehaviour
         {
             stateMachine.currentPlayer--;
             stateMachine.playerIndicator.SetIndicatorActive();
-            //stateMachine.playerIndicator.gameObject.GetComponent<Renderer>().enabled = true;
             stateMachine.playerIndicator.transform.SetParent(stateMachine.levelInfo.players[stateMachine.currentPlayer].transform, false);
             stateMachine.ui.ChangePlayer(stateMachine.currentPlayer);
             stateMachine.ui.SetPlayerPause(stateMachine.currentPlayer);

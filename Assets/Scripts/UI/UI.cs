@@ -12,7 +12,8 @@ public class UI : MonoBehaviour
     private Image bestTimeBackground;
     public Color winColorTimer;
     public Color notWonColorTimer;
-    
+
+    private GameObject nextLevelButton;
     private GameObject indicator;
     private Color[] colors;
     private int noPlayers;
@@ -48,6 +49,7 @@ public class UI : MonoBehaviour
         totalTime = transform.Find("Timer/TotalTime").GetComponent<TextMeshProUGUI>();
         bestTimeTimer = transform.Find("BestTimeTimer/TotalTime").GetComponent<TextMeshProUGUI>();
         bestTimeBackground = transform.Find("BestTimeTimer").GetComponent<Image>();
+        nextLevelButton = transform.Find("PlayerUI/NextLevelButton").gameObject;
         UpdateBestTime();
         SetupTimebar();
         
@@ -103,11 +105,13 @@ public class UI : MonoBehaviour
         }
         else if (player >= 0 && player < noPlayers)
         {
-            cam.backgroundColor = colors[player];    
+            cam.backgroundColor = colors[player];
+            nextLevelButton.SetActive(false);
         }
         else if (player >= noPlayers)
         {
             cam.backgroundColor = winColorBackground;
+            nextLevelButton.SetActive(true);
         }
     }
 

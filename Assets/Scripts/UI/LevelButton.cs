@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -12,16 +11,7 @@ public class LevelButton : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        char[] levelNameCharArray = name.ToCharArray();
-        if (levelNameCharArray.Length == 6)
-        {
-            levelNumber = levelNameCharArray[5]-48;    
-        }
-        else if (levelNameCharArray.Length == 7)
-        {
-            levelNumber = (levelNameCharArray[5] - 48) * 10;
-            levelNumber += levelNameCharArray[6] - 48;
-        }
+        levelNumber = Int32.Parse(name.Split('l')[1]);
         
         button = gameObject.GetComponent<Button>();
         button.onClick.AddListener(() => {SceneManager.LoadScene("Level" + levelNumber);});

@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class Level : MonoBehaviour
 {
+    public static int NUMBER_OF_LEVELS = 6;
+    
     public int levelLengthInSeconds = 4;
     
     public GameObject[] players;
@@ -20,18 +22,8 @@ public class Level : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        char[] levelNameCharArray = SceneManager.GetActiveScene().name.ToCharArray();
-        if (levelNameCharArray.Length == 6)
-        {
-            levelNumber = levelNameCharArray[5]-48;    
-        }
-        else if (levelNameCharArray.Length == 7)
-        {
-            levelNumber = (levelNameCharArray[5] - 48) * 10;
-            levelNumber += levelNameCharArray[6] - 48;
-        }
+        levelNumber = Int32.Parse(SceneManager.GetActiveScene().name.Split('l')[1]);
         
-        int x = (int)"5".ToCharArray()[0];
         collectibles = FindObjectsOfType<Collectible>();
         obstacles = FindObjectsOfType<Obstacle>();
         
