@@ -1,6 +1,6 @@
 # JumpAndRun
 
-A small Jump'n'Run puzzle project. Player movement gets recorded and replayed. The goal is to get all golden orbs in one simultanious run by recording the player movement one by one.
+A small Jump'n'Run puzzle project I did in my free time to improve my Unity skills. The goal is to get all golden orbs in one simultanious run by recording the player movement one by one.
 
 # Tutorial
 
