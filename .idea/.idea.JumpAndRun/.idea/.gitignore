@@ -2,12 +2,12 @@
 /shelf/
 /workspace.xml
 # Rider ignored files
-/modules.xml
-/projectSettingsUpdater.xml
 /contentModel.xml
-/.idea.Worms.iml
+/projectSettingsUpdater.xml
+/modules.xml
+/.idea.JumpAndRun.iml
 # Datasource local storage ignored files
-/../../../../../../../../../:\Users\Max\Documents\GitHub\Worms\.idea\.idea.Worms\.idea/dataSources/
+/../../../../../../../../../:\Users\Max\Documents\GitHub\JumpAndRun\.idea\.idea.JumpAndRun\.idea/dataSources/
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
