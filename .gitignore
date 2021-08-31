@@ -6,10 +6,15 @@
 /[Tt]emp/
 /[Oo]bj/
 /[Bb]uild/
+/[Bb]uildMac/
+/[Bb]uildMac.app/
+/MaxSuperSpiel.app/
 /[Bb]uilds/
 /[Ll]ogs/
 /[Mm]emoryCaptures/
-/[Aa]ssets/Saves/*
+/[Aa]ssets/Saves/
+
+Tutorial.pptx
 
 # Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
